@@ -192,6 +192,21 @@ task generateAsNullableFunctions {
     }
 }
 
+task generateNullableDestructuringExtensions {
+    dependsOn "recreateGeneratedSrcDir"
+
+    doLast {
+        generateSourceFile("nullable-destructuring.kt") { out ->
+            for (n in 2..maxTupleSize) {
+                for (i in 1..n) {
+                    out.println("operator fun <${params(n, "T")}> ${tupleType(n)}?.component$i(): T$i? = this?.component$i()")
+                }
+                out.println()
+            }
+        }
+    }
+}
+
 
 task generateContainsFunctions {
     dependsOn "recreateGeneratedSrcDir"
@@ -216,6 +231,7 @@ task generateSrcMain {
     dependsOn "generatePlusFunctions"
     dependsOn "generateNonNullFunctions"
     dependsOn "generateAsNullableFunctions"
+    dependsOn "generateNullableDestructuringExtensions"
     dependsOn "generateContainsFunctions"
 }
 

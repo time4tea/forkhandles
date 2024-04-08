@@ -3,8 +3,9 @@ package dev.forkhandles.tuples
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class TupleExampleTest {
@@ -48,7 +49,7 @@ class TupleExampleTest {
     }
     
     @Test
-    fun `contains`() {
+    fun contains() {
         assertTrue(0 !in tuple(1,2,3))
         assertTrue(1 in tuple(1,2,3))
         assertTrue(2 in tuple(1,2,3))
@@ -57,5 +58,19 @@ class TupleExampleTest {
         
         assertTrue("x" in tuple("x","y"))
         assertTrue("z" !in tuple("x","y"))
+    }
+    
+    @Test
+    fun `destructuring nullable tuple`() {
+        @Suppress("RedundantNullableReturnType")
+        val a : Tuple2<String,Int>? = tuple("A", 1)
+        val (a1,a2) = a
+        assertEquals("A", a1)
+        assertEquals(1, a2)
+        
+        val b : Tuple2<String,Int>? = null
+        val (b1,b2) = b
+        assertNull(b1)
+        assertNull(b2)
     }
 }
