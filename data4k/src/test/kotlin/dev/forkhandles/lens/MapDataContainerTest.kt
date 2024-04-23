@@ -43,6 +43,7 @@ class MapBacked(map: Map<String, Any?>) : MapDataContainer(map), MainClassFields
     override var intValue by optional(IntType)
     override var stringValue by required(StringType)
     override var localDateValue by required(LocalDateType)
+    override var booleanValue by required(BooleanType)
 
     override var optional by optional<String>(foo, bar)
     override var optionalList by optionalList<String>(foo, bar)

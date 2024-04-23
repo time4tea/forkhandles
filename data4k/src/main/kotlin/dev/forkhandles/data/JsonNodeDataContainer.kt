@@ -35,24 +35,24 @@ open class JsonNodeDataContainer(input: JsonNode) :
     ) {
     companion object {
         private fun Any?.toNode(): JsonNode? = when (this) {
-            null -> NullNode.instance
-            is JsonNode -> this
-            is DataContainer<*> -> unwrap().toNode()
-            is Boolean -> if (this) TRUE else FALSE
-            is Int -> IntNode(this)
-            is Long -> LongNode(this)
-            is Float -> FloatNode(this)
-            is ByteArray -> BinaryNode(this)
-            is Short -> ShortNode(this)
-            is BigDecimal -> DecimalNode(this)
-            is BigInteger -> BigIntegerNode(this)
-            is Double -> DoubleNode(this)
-            is String -> TextNode(this)
-            is Iterable<*> -> ArrayNode(instance)
-                .also { map { if (it is JsonNode) it else it.toNode() }.forEach(it::add) }
+                null -> NullNode.instance
+                is JsonNode -> this
+                is DataContainer<*> -> unwrap().toNode()
+                is Boolean -> if (this) TRUE else FALSE
+                is Int -> IntNode(this)
+                is Long -> LongNode(this)
+                is Float -> FloatNode(this)
+                is ByteArray -> BinaryNode(this)
+                is Short -> ShortNode(this)
+                is BigDecimal -> DecimalNode(this)
+                is BigInteger -> BigIntegerNode(this)
+                is Double -> DoubleNode(this)
+                is String -> TextNode(this)
+                is Iterable<*> -> ArrayNode(instance)
+                    .also { map { if (it is JsonNode) it else it.toNode() }.forEach(it::add) }
 
-            else -> error("Invalid node type ${this::class.java}")
-        }
+                else -> error("Invalid node type ${this::class.java}")
+            }
 
         private fun nodeToValue(input: JsonNode): Any? = when (input) {
             is NullNode -> null

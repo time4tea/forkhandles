@@ -7,6 +7,8 @@ import dev.forkhandles.data.Metadatum
 import dev.forkhandles.data.PropertyMetadata
 import dev.forkhandles.lens.ContainerMeta.bar
 import dev.forkhandles.lens.ContainerMeta.foo
+import dev.forkhandles.values.BooleanValue
+import dev.forkhandles.values.BooleanValueFactory
 import dev.forkhandles.values.IntValue
 import dev.forkhandles.values.IntValueFactory
 import dev.forkhandles.values.LocalDateValue
@@ -67,12 +69,17 @@ interface MainClassFields<C : ChildFields<G>, G : GrandchildFields, CONTENT> {
     var requiredData: CONTENT
 
     var intValue: IntType?
+    var booleanValue: BooleanType
     var stringValue: StringType
     var localDateValue: LocalDateType
 }
 
 class IntType private constructor(value: Int) : IntValue(value) {
     companion object : IntValueFactory<IntType>(::IntType)
+}
+
+class BooleanType private constructor(value: Boolean) : BooleanValue(value) {
+    companion object : BooleanValueFactory<BooleanType>(::BooleanType)
 }
 
 class LocalDateType private constructor(value: LocalDate) : LocalDateValue(value) {
@@ -125,6 +132,7 @@ abstract class DataContainerContract<C : ChildFields<G>, G : GrandchildFields, C
                 "optionalValue" to 123,
                 "optional" to "optional",
                 "stringValue" to "stringValue",
+                "booleanValue" to true,
                 "localDateValue" to "1999-12-31",
                 "intValue" to 1,
             )
@@ -147,6 +155,7 @@ abstract class DataContainerContract<C : ChildFields<G>, G : GrandchildFields, C
         expectThat(input.stringValue).isEqualTo(StringType.of("stringValue"))
         expectThat(input.intValue).isEqualTo(IntType.of(1))
         expectThat(input.localDateValue).isEqualTo(LocalDateType.of(of(1999, 12, 31)))
+        expectThat(input.booleanValue).isEqualTo(BooleanType.of(true))
 
         expectThat(input.optional).isEqualTo("optional")
         expectThat(container(mapOf()).optional).isNull()
@@ -171,6 +180,7 @@ abstract class DataContainerContract<C : ChildFields<G>, G : GrandchildFields, C
                 "optional" to "optional",
                 "localDateValue" to "1999-12-31",
                 "stringValue" to "stringValue",
+                "booleanValue" to true,
                 "intValue" to 1
             )
         )
@@ -184,6 +194,7 @@ abstract class DataContainerContract<C : ChildFields<G>, G : GrandchildFields, C
         expectSetWorks(input::stringValue, StringType.of("123"))
         expectSetWorks(input::intValue, IntType.of(123))
         expectSetWorks(input::localDateValue, LocalDateType.of(of(1999, 12, 12)))
+        expectSetWorks(input::booleanValue, BooleanType.of(false))
 
         expectSetWorks(input::optional, "123123")
         expectSetWorks(input::optional, null)
