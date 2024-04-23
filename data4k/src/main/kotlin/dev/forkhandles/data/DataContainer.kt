@@ -167,7 +167,7 @@ abstract class DataContainer<DATA>(
 
     private fun <IN : Any, OUT : Value<IN>> ValueFactory<OUT, IN>.show(): (OUT) -> IN = {
         when (it.value) {
-            is Boolean, is Number, is ByteArray -> it.value
+            is String, is Boolean, is Number, is ByteArray -> it.value
             else -> show(it) as IN
         }
     }
