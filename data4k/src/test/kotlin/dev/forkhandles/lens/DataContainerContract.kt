@@ -165,7 +165,7 @@ abstract class DataContainerContract<C : ChildFields<G>, G : GrandchildFields, C
     }
 
     @Test
-    fun `can write primitives values`() {
+    fun `can write primitives values`(approver: Approver) {
         val input = container(
             mapOf(
                 "string" to "string",
@@ -199,6 +199,8 @@ abstract class DataContainerContract<C : ChildFields<G>, G : GrandchildFields, C
         expectSetWorks(input::optional, "123123")
         expectSetWorks(input::optional, null)
         expectSetWorks(input::mapped, 123)
+
+        approver.assertApproved(input.toString())
     }
 
     @Test
@@ -223,7 +225,7 @@ abstract class DataContainerContract<C : ChildFields<G>, G : GrandchildFields, C
     }
 
     @Test
-    fun `read and write data values`() {
+    fun `read and write data values`(approver: Approver) {
         val inner = data(mutableMapOf("name" to "string"))
         val outer = container(mapOf("requiredData" to inner))
 
@@ -231,6 +233,8 @@ abstract class DataContainerContract<C : ChildFields<G>, G : GrandchildFields, C
         expectThat(outer.optionalData).isNull()
         outer.optionalData = inner
         expectThat(outer.optionalData).isEqualTo(inner)
+
+        approver.assertApproved(inner.toString())
     }
 
     @Test
@@ -292,7 +296,7 @@ abstract class DataContainerContract<C : ChildFields<G>, G : GrandchildFields, C
     }
 
     @Test
-    fun `write list values`() {
+    fun `write list values`(approver: Approver) {
         val input = container(
             mapOf(
                 "list" to listOf("string1", "string2"),
@@ -311,6 +315,8 @@ abstract class DataContainerContract<C : ChildFields<G>, G : GrandchildFields, C
         expectSetWorks(input::optionalSubClassList, listOf(childContainer(mapOf("123" to "123"))))
         expectSetWorks(input::optionalValueList, listOf(MyType.of(123), MyType.of(456)))
         expectSetWorks(input::optionalList, listOf("hello"))
+
+        approver.assertApproved(input.toString())
     }
 
     @Test
