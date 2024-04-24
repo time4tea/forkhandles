@@ -175,12 +175,12 @@ abstract class DataContainer<DATA>(
     }
 
     /**
-     * Make a copy of this container with the given property updated to the given value
+     * Update container with the given property updated to the given value
      */
-    inline fun <reified NEXT : DataContainer<DATA>, PROP> copy(property: KProperty1<NEXT, PROP>, value: PROP): NEXT {
+    inline fun <reified NEXT : DataContainer<DATA>, PROP> updateWith(property: KProperty1<NEXT, PROP>, value: PROP) {
         property.isAccessible = true
         val newContainer = NEXT::class.constructors.first().call(unwrap())
-        return newContainer.also {
+        newContainer.also {
             @Suppress("UNCHECKED_CAST")
             (property.getDelegate(it) as ReadWriteProperty<NEXT, PROP>).setValue(it, property, value)
         }

@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API changes with their rationale
 when appropriate:
 
+### v2.18.0.0
+- **data4k** Make DataContainer contents mutable as chaining does not work otherwise.
+- **data4k** Added updateWith() method to DataContainer to allow making a update of objects with an updated field
+
 ### v2.17.0.0
 - **data4k** [Possible Break] DataContainers make a copy of their content data on construction. 
 - **data4k** Added copy() method to DataContainer to allow making a copy of objects with an updated field

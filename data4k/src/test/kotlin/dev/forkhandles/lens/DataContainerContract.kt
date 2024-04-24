@@ -337,4 +337,7 @@ abstract class DataContainerContract<C : ChildFields<G>, G : GrandchildFields, C
         prop.set(value)
         expectThat(prop.get()).isEqualTo(value)
     }
+
+    @Test
+    abstract fun `can update an arbitrary value`(approver: Approver)
 }

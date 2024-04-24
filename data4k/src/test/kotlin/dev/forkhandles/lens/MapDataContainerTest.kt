@@ -5,22 +5,21 @@ import dev.forkhandles.data.MapDataContainer
 import dev.forkhandles.lens.ContainerMeta.bar
 import dev.forkhandles.lens.ContainerMeta.foo
 import org.junit.jupiter.api.Test
-import strikt.api.expectThat
-import strikt.assertions.isEqualTo
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class GrandchildMap(propertySet: Map<String, Any?>) : MapDataContainer(propertySet), GrandchildFields {
+class GrandchildMap(propertySet: MutableMap<String, Any?>) : MapDataContainer(propertySet), GrandchildFields {
     override var long by required<Long>()
 }
 
-class ChildMap(propertySet: Map<String, Any?>) : MapDataContainer(propertySet), ChildFields<GrandchildMap> {
+class ChildMap(propertySet: MutableMap<String, Any?>) : MapDataContainer(propertySet), ChildFields<GrandchildMap> {
     override var string by required<String>()
     override var noSuch by required<String>()
     override var grandchild by requiredObj(::GrandchildMap)
 }
 
-class MapBacked(map: Map<String, Any?>) : MapDataContainer(map), MainClassFields<ChildMap, GrandchildMap, MutableMap<String, Any?>> {
+class MapBacked(map: MutableMap<String, Any?>) : MapDataContainer(map),
+    MainClassFields<ChildMap, GrandchildMap, MutableMap<String, Any?>> {
     override var standardField = "foobar"
     override var string by required<String>(foo, bar)
     override var boolean by required<Boolean>(foo, bar)
@@ -67,10 +66,9 @@ class MapDataContainerTest : DataContainerContract<ChildMap, GrandchildMap, Muta
     override fun grandchildContainer(input: Map<String, Any?>) = GrandchildMap(data(input))
 
     @Test
-    fun `can update an arbitrary value by copy`(approver: Approver) {
+    override fun `can update an arbitrary value`(approver: Approver) {
         val input = childContainer(emptyMap())
-        val updated = input.copy(MapBacked::stringValue, StringType.of("123"))
-        expectThat(input).isEqualTo(childContainer(emptyMap()))
-        approver.assertApproved(updated.toString())
+        input.updateWith(MapBacked::stringValue, StringType.of("123"))
+        approver.assertApproved(input.toString())
     }
 }

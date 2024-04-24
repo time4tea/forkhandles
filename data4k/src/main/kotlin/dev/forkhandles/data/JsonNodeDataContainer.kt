@@ -25,7 +25,7 @@ import java.math.BigInteger
  */
 open class JsonNodeDataContainer(input: JsonNode) :
     DataContainer<JsonNode>(
-        input.deepCopy(),
+        input,
         { content, it -> content.has(it) },
         { content, it -> content[it]?.let(::nodeToValue) },
         { node, name, value ->

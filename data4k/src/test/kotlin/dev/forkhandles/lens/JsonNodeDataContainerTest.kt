@@ -7,8 +7,6 @@ import dev.forkhandles.data.JsonNodeDataContainer
 import dev.forkhandles.lens.ContainerMeta.bar
 import dev.forkhandles.lens.ContainerMeta.foo
 import org.junit.jupiter.api.Test
-import strikt.api.expectThat
-import strikt.assertions.isEqualTo
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -72,10 +70,9 @@ class JsonNodeDataContainerTest : DataContainerContract<ChildNode, GrandchildNod
         GrandchildNode(data(input))
 
     @Test
-    fun `can update an arbitrary value by copy`(approver: Approver) {
+    override fun `can update an arbitrary value`(approver: Approver) {
         val input = childContainer(emptyMap())
-        val updated = input.copy(TopNode::stringValue, StringType.of("123"))
-        expectThat(input).isEqualTo(childContainer(emptyMap()))
-        approver.assertApproved(updated.toString())
+        input.updateWith(TopNode::stringValue, StringType.of("123"))
+        approver.assertApproved(input.toString())
     }
 }
