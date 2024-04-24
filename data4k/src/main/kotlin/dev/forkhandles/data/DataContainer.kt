@@ -6,6 +6,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 /**
@@ -179,11 +180,11 @@ abstract class DataContainer<DATA>(
      */
     inline fun <reified NEXT : DataContainer<DATA>, PROP> updateWith(property: KProperty1<NEXT, PROP>, value: PROP) {
         property.isAccessible = true
-        val newContainer = NEXT::class.constructors.first().call(unwrap())
-        newContainer.also {
+
+        NEXT::class.primaryConstructor?.call(unwrap())?.let {
             @Suppress("UNCHECKED_CAST")
             (property.getDelegate(it) as ReadWriteProperty<NEXT, PROP>).setValue(it, property, value)
-        }
+        } ?: error("No constructor defined in ${NEXT::class}")
     }
 
     /** Deprecated **/
