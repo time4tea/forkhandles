@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API changes with their rationale
 when appropriate:
 
+### v2.16.1.0
+- **data4k** Finalise methods (should have been non-open)
+
 ### v2.16.0.1
 - **data4k** Fix serialisation of booleans.
 

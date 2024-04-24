@@ -48,14 +48,14 @@ abstract class DataContainer<DATA>(
 
     protected fun <OUT : Any> required(vararg metaData: Metadatum) = required<OUT, OUT>({ it }, { it }, *metaData)
 
-    protected open fun <IN : Any, OUT : Value<IN>> required(
+    protected fun <IN : Any, OUT : Value<IN>> required(
         factory: ValueFactory<OUT, IN>,
         vararg metaData: Metadatum
     ) = required(factory.parse(), factory.show(), *metaData)
 
     /** Optional **/
 
-    protected open fun <OUT, NEXT : Any> optional(
+    protected fun <OUT, NEXT : Any> optional(
         mapInFn: (OUT) -> NEXT,
         mapOutFn: (NEXT) -> OUT?,
         vararg metaData: Metadatum
@@ -66,7 +66,7 @@ abstract class DataContainer<DATA>(
 
     protected fun <OUT> optional(vararg metaData: Metadatum) = property<OUT?, OUT, OUT>({ it }, { it }, *metaData)
 
-    protected open fun <IN : Any, OUT : Value<IN>> optional(
+    protected fun <IN : Any, OUT : Value<IN>> optional(
         factory: ValueFactory<OUT, IN>,
         vararg metaData: Metadatum
     ) =
@@ -74,7 +74,7 @@ abstract class DataContainer<DATA>(
 
     /** Object **/
 
-    protected open fun <OUT : DataContainer<DATA>> requiredObj(
+    protected fun <OUT : DataContainer<DATA>> requiredObj(
         mapInFn: (DATA) -> OUT,
         mapOutFn: (OUT) -> DATA?,
         vararg metaData: Metadatum
