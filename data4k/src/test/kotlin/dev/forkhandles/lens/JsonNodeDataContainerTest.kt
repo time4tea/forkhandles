@@ -2,9 +2,13 @@ package dev.forkhandles.lens
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.oneeyedmen.okeydoke.Approver
 import dev.forkhandles.data.JsonNodeDataContainer
 import dev.forkhandles.lens.ContainerMeta.bar
 import dev.forkhandles.lens.ContainerMeta.foo
+import org.junit.jupiter.api.Test
+import strikt.api.expectThat
+import strikt.assertions.isEqualTo
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -66,4 +70,12 @@ class JsonNodeDataContainerTest : DataContainerContract<ChildNode, GrandchildNod
 
     override fun grandchildContainer(input: Map<String, Any?>) =
         GrandchildNode(data(input))
+
+    @Test
+    fun `can update an arbitrary value by copy`(approver: Approver) {
+        val input = childContainer(emptyMap())
+        val updated = input.copy(TopNode::stringValue, StringType.of("123"))
+        expectThat(input).isEqualTo(childContainer(emptyMap()))
+        approver.assertApproved(updated.toString())
+    }
 }

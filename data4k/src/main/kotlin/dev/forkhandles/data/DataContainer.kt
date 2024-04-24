@@ -2,7 +2,9 @@ package dev.forkhandles.data
 
 import dev.forkhandles.values.Value
 import dev.forkhandles.values.ValueFactory
+import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
@@ -172,6 +174,18 @@ abstract class DataContainer<DATA>(
         }
     }
 
+    /**
+     * Make a copy of this container with the given property updated to the given value
+     */
+    inline fun <reified NEXT : DataContainer<DATA>, PROP> copy(property: KProperty1<NEXT, PROP>, value: PROP): NEXT {
+        property.isAccessible = true
+        val newContainer = NEXT::class.constructors.first().call(unwrap())
+        return newContainer.also {
+            @Suppress("UNCHECKED_CAST")
+            (property.getDelegate(it) as ReadWriteProperty<NEXT, PROP>).setValue(it, property, value)
+        }
+    }
+
     /** Deprecated **/
 
     @Deprecated("renamed", ReplaceWith("requiredData( *metaData)"))
@@ -209,6 +223,4 @@ abstract class DataContainer<DATA>(
     @Deprecated("renamed", ReplaceWith("Customize Toolbar..."))
     protected fun <OUT : DataContainer<DATA>> obj(mapInFn: (DATA) -> OUT, vararg metaData: Metadatum) =
         requiredObj(mapInFn, *metaData)
-
 }
-

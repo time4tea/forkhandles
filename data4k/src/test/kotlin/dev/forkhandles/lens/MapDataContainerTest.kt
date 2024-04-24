@@ -1,8 +1,12 @@
 package dev.forkhandles.lens
 
+import com.oneeyedmen.okeydoke.Approver
 import dev.forkhandles.data.MapDataContainer
 import dev.forkhandles.lens.ContainerMeta.bar
 import dev.forkhandles.lens.ContainerMeta.foo
+import org.junit.jupiter.api.Test
+import strikt.api.expectThat
+import strikt.assertions.isEqualTo
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -61,4 +65,12 @@ class MapDataContainerTest : DataContainerContract<ChildMap, GrandchildMap, Muta
     override fun container(input: Map<String, Any?>) = MapBacked(data(input))
     override fun childContainer(input: Map<String, Any?>) = ChildMap(data(input))
     override fun grandchildContainer(input: Map<String, Any?>) = GrandchildMap(data(input))
+
+    @Test
+    fun `can update an arbitrary value by copy`(approver: Approver) {
+        val input = childContainer(emptyMap())
+        val updated = input.copy(MapBacked::stringValue, StringType.of("123"))
+        expectThat(input).isEqualTo(childContainer(emptyMap()))
+        approver.assertApproved(updated.toString())
+    }
 }
