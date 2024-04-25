@@ -110,3 +110,59 @@ For times where we want to display the underlying value as a String, we can use 
 ```kotlin
 Money.show(Money.of(123)) // returns "123"
 ```
+
+### Prefixed UUIDs
+
+These can be handy in the case where you would like to use UUIDs for things, but don't want to mix them up,
+simply add a prefix.
+ 
+
+```kotlin
+class CustomerId private constructor(prefix: String, value: UUID) : PrefixUUIDValue(prefix, value) {
+    companion object : PrefixUUIDValueFactory<CustomerId>(::CustomerId, "customer")
+}
+
+println(CustomerId.random())
+// customer-0b794898-9449-4c14-84c7-2290f4ee53fc
+```
+
+#### Using V7 UUIDs
+
+Using a V7 UUID generator, e.g. com.fasterxml.uuid:java-uuid-generator
+
+```kotlin
+
+private val generator = Generators.timeBasedEpochGenerator()
+
+open class PrefixUUIDV7ValueFactory<DOMAIN : Value<UUID>>(
+    fn: (String, UUID) -> DOMAIN,
+    prefix: String,
+) : PrefixUUIDValueFactory<DOMAIN> (
+    fn,
+    prefix,
+    generator::generate
+)
+
+
+class CustomerId private constructor(prefix: String, value: UUID) : PrefixUUIDValue(prefix, value) {
+    companion object : PrefixUUIDV7ValueFactory<CustomerId>(::CustomerId, "customer")
+}
+
+println(CustomerId.random())
+// customer-018f1614-441f-7d4b-ae4c-7f45b3d0a26a
+```
+
+#### Prefixed UUIDs and http4k
+
+If you are using [http4k](https://www.http4k.org/), you can register a prefixed UUID value with a mapper just like normal and it will work
+
+```kotlin
+object ExampleJson : ConfigurableJackson(
+    KotlinModule.Builder()
+        .build()
+        .asConfigurable()
+        .withStandardMappings()
+        .value(CustomerId)
+        .done()
+)
+```

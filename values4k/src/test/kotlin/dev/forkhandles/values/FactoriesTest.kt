@@ -3,7 +3,9 @@ package dev.forkhandles.values
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.startsWith
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.net.URI
@@ -94,4 +96,32 @@ class FactoriesTest {
         assertThat(OffsetDateTimeValueFactory(::TV).now(clock), equalTo(TV(OffsetDateTime.ofInstant(EPOCH, ZoneId.of("UTC")))))
         assertThat(InstantValueFactory(::TV).now(clock), equalTo(TV(EPOCH)))
     }
+
+    class PrefixedId private constructor(prefix: String, value: UUID) : PrefixUUIDValue(prefix, value) {
+        companion object : PrefixUUIDValueFactory<PrefixedId>(::PrefixedId, "nice-prefix")
+    }
+
+    @Test
+    fun `prefixed uuids`() {
+        assertThat(PrefixedId.random().toString(), startsWith("nice-prefix-"))
+        assertThat(PrefixedId.parse("nice-prefix-1e6d253d-dd83-485a-97e2-63d47f02e665").value, equalTo(UUID.fromString("1e6d253d-dd83-485a-97e2-63d47f02e665")))
+        assertThrows<IllegalArgumentException> {
+            PrefixedId.parse("nice-prefix-abcde")
+        }
+        assertThrows<IllegalArgumentException> {
+            PrefixedId.parse("1e6d253d-dd83-485a-97e2-63d47f02e665")
+        }
+        assertThrows<IllegalArgumentException> {
+            PrefixedId.parse("nice-prefix1e6d253d-dd83-485a-97e2-63d47f02e665")
+        }
+
+        val value = UUID.randomUUID()
+        val stringValue = value.toString()
+        val prefixed = PrefixedId.of(value)
+
+        assertThat(PrefixedId.show(prefixed), equalTo("nice-prefix-$stringValue"))
+        assertThat(prefixed.toString(), equalTo("nice-prefix-$stringValue"))
+        assertThat(prefixed.value, equalTo(value))
+    }
+
 }

@@ -127,6 +127,23 @@ open class UUIDValueFactory<DOMAIN : Value<UUID>>(
     fn: (UUID) -> DOMAIN, validation: Validation<UUID>? = null
 ) : ValueFactory<DOMAIN, UUID>(fn, validation, UUID::fromString)
 
+
+open class PrefixUUIDValueFactory<DOMAIN : Value<UUID>>(
+    fn: (String, UUID) -> DOMAIN,
+    prefix: String,
+    private val uuid: () -> UUID = UUID::randomUUID
+) : ValueFactory<DOMAIN, UUID>({ fn(prefix, it) }, null,
+    { v -> "$prefix-".let { p -> if (v.startsWith(p)) UUID.fromString(v.substringAfter(p)) else error("Invalid prefix") } },
+    { "$prefix-$it" }
+) {
+    fun random() = of(uuid())
+}
+
+abstract class PrefixUUIDValue(private val prefix: String, value: UUID) : UUIDValue(value) {
+    override fun toString() = "$prefix-$value"
+}
+
+
 open class URLValueFactory<DOMAIN : Value<URL>>(
     fn: (URL) -> DOMAIN, validation: Validation<URL>? = null
 ) : ValueFactory<DOMAIN, URL>(fn, validation, ::URL)
